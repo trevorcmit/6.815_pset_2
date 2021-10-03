@@ -3,9 +3,7 @@
  * Created: 2015-08-29
  * Updated: 2019-08-10
  * -----------------------------------------------------------------
- *
  * The 6.815/6.865 Image Class
- *
  * ---------------------------------------------------------------*/
 
 #include "Image.h"
@@ -19,7 +17,40 @@ using namespace std;
 // pixel value (clamp = true) when indexing out of the bounds of the image
 float Image::smartAccessor(int x, int y, int z, bool clamp) const {
   // --------- HANDOUT  PS02 ------------------------------
-  return 0.0f; // change this
+  int new_x, new_y; // Initialize new X and Y variables for clamp = true
+  if (x < 0) {  // x < 0 case
+    if (clamp) {
+      new_x = 0; // New x value for final return
+    }
+    else {
+      return 0.0f; // Return black if no clamping
+    }
+  }
+  if (y < 0) { // y < 0 case
+    if (clamp) {
+      new_y = 0; // New y value for final return
+    }
+    else {
+      return 0.0f; // Return black if no clamping
+    }
+  }
+  if (x >= width()) { // x greater than accepted indexable width case
+    if (clamp) {
+      new_x = width() - 1; // New x value for final return
+    }
+    else {
+      return 0.0f; // Return black if no clamping
+    }
+  }
+  if (y >= height()) {  // y greater than accepted indexable height case
+    if (clamp) {
+      new_y = height() - 1;  // New y value for final return
+    }
+    else {
+      return 0.0f; // Return black if no clamping
+    }
+  }
+  return (*this)(new_x, new_y, z); // Return pixel from self (this) object
 }
 // ---------------- END of PS02 -------------------------------------
 
