@@ -14,11 +14,24 @@
 #include "basicImageManipulation.h"
 using namespace std;
 
-Image boxBlur(const Image &im, int k, bool clamp) {
+Image boxBlur(const Image &im, int k, bool clamp) { // Safe to assume k is odd
   // --------- HANDOUT  PS02 ------------------------------
-  // Convolve an image with a box filter of size k by k
-  // It is safe to asssume k is odd.
-  return im; // change this
+  Image output(im.width(), im.height(), im.channels());
+  for (int h = 0; h < im.height(); h++) { // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) {
+  
+      float sum = 0.0f; // Initialize sum for averaging
+      for (int h0 = h - (k - 1)/2; h0 < h - (k - 1)/2 + k; h0++) {
+        for (int w0 = w - (k - 1)/2; w0 < w - (k - 1)/2 + k; w0++) { // Iterate over kernel-contained coordinates
+          sum += im.smartAccessor(w0, h0, c, clamp);
+        }
+      }
+      output(w, h, c) = sum / (k * k); // Put averages in output pixels by dividing by k^2
+      }
+    }
+  }
+  return output; // Return output image
 }
 
 Image Filter::convolve(const Image &im, bool clamp) const {

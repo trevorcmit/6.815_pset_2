@@ -17,7 +17,7 @@ using namespace std;
 // pixel value (clamp = true) when indexing out of the bounds of the image
 float Image::smartAccessor(int x, int y, int z, bool clamp) const {
   // --------- HANDOUT  PS02 ------------------------------
-  int new_x, new_y; // Initialize new X and Y variables for clamp = true
+  int new_x = x, new_y = y; // Initialize new X and Y variables for clamp = true
   if (x < 0) {  // x < 0 case
     if (clamp) {
       new_x = 0; // New x value for final return
