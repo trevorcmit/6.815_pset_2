@@ -21,18 +21,21 @@ int main() {
   cout << "nothing done in a2_main.cpp, debug me !" << endl;
 
   // ------- Example tests, change them ! --------------
-  Image im = impulseImg(10);
-  cout << "smart accessor at (1,3,0): " << im.smartAccessor(1, 3, 0, true)
-       << endl;
+  // Image im = impulseImg(10);
+  // cout << "smart accessor at (1,3,0): " << im.smartAccessor(1, 3, 0, true)
+  //      << endl;
 
-  Image blurred = boxBlur(im, 3, true);
-  cout << "blurred impulse image" << endl;
+  // Image blurred = boxBlur(im, 3, true);
+  // cout << "blurred impulse image" << endl;
 
   // cout << "keep testing..." << endl;
 
   Image im2("./Input/Cambridge2.png");
-  Image blurred2 = boxBlur(im2, 9, true);
-  blurred2.write("./Output/blurred_cambridge2.png");
+  Image blurred1 = boxBlur(im2, 9, true);
+  blurred1.write("./Output/boxblur_cambridge2.png");
+
+  Image blurred2 = boxBlur_filterClass(im2, 9, true);
+  blurred2.write("./Output/boxblur_filterClass_cambridge2.png");
   // ---------------------------------------------------
 
   // // ---------------------------------------------------

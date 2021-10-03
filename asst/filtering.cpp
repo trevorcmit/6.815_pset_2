@@ -37,14 +37,42 @@ Image boxBlur(const Image &im, int k, bool clamp) { // Safe to assume k is odd
 Image Filter::convolve(const Image &im, bool clamp) const {
   // --------- HANDOUT  PS02 ------------------------------
   // Write a convolution function for the filter class
-  return im; // change this
+
+  Image output(im.width(), im.height(), im.channels()); // Initialize output image of same size
+  for (int h = 0; h < im.height(); h++) { // Iterate pixels in row-major iteration order
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) {
+  
+      float sum = 0.0f; // Initialize sum for averaging
+      int f_h = 0;      // Initialize index for kernel y value
+      for (int h0 = h - (height() - 1)/2; h0 < h - (height() - 1)/2 + height(); h0++) { // Row-major local iteration
+        int f_w = 0;    // Index for kernel x value
+        for (int w0 = w - (width() - 1)/2; w0 < w - (width() - 1)/2 + width(); w0++) {
+          sum += im.smartAccessor(w0, h0, c, clamp) * (*this)(f_w, f_h);
+          f_w += 1; // Increment kernel x value
+        }
+        f_h += 1; // Increment kernel y value
+      }
+
+      output(w, h, c) = sum; // Put convolution sum into output image
+      }
+    }
+  }
+  return output; // change this
 }
 
 Image boxBlur_filterClass(const Image &im, int k, bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
   // Reimplement the box filter using the filter class.
   // check that your results match those in the previous function "boxBlur"
-  return im; // change this
+  
+  vector<float> kernel;
+	for (int n = 0; n < k * k; n++) {
+		kernel.push_back(1.0f / (float(k * k))); // Generate averaging kernel of k * k size
+	}
+
+	Filter blur(kernel, k, k);       // Initialize filter then return convolution
+	return blur.convolve(im, clamp); 
 }
 
 Image gradientMagnitude(const Image &im, bool clamp) {
