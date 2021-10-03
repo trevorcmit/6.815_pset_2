@@ -36,8 +36,6 @@ Image boxBlur(const Image &im, int k, bool clamp) { // Safe to assume k is odd
 
 Image Filter::convolve(const Image &im, bool clamp) const {
   // --------- HANDOUT  PS02 ------------------------------
-  // Write a convolution function for the filter class
-
   Image output(im.width(), im.height(), im.channels()); // Initialize output image of same size
   for (int h = 0; h < im.height(); h++) { // Iterate pixels in row-major iteration order
     for (int w = 0; w < im.width(); w++) {
@@ -58,14 +56,11 @@ Image Filter::convolve(const Image &im, bool clamp) const {
       }
     }
   }
-  return output; // change this
+  return output; // Return output image
 }
 
 Image boxBlur_filterClass(const Image &im, int k, bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
-  // Reimplement the box filter using the filter class.
-  // check that your results match those in the previous function "boxBlur"
-  
   vector<float> kernel;
 	for (int n = 0; n < k * k; n++) {
 		kernel.push_back(1.0f / (float(k * k))); // Generate averaging kernel of k * k size
@@ -79,7 +74,24 @@ Image gradientMagnitude(const Image &im, bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
   // Uses a Sobel kernel to compute the horizontal and vertical components
   // of the gradient of an image and returns the gradient magnitude.
-  return im; // change this
+  vector<float> horizontal{-1.0, 0.0, 1.0, -2.0, 0.0, 2.0, -1.0, 0.0, 1.0}; // Make kernels
+  vector<float> vertical{-1.0, -2.0, -1.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0};
+  Filter grad_h(horizontal, 3, 3); // Make filters
+  Filter grad_v(vertical, 3, 3);
+  Image im_h = grad_h.convolve(im, clamp); // Convolve components
+  Image im_v = grad_v.convolve(im, clamp);
+
+  Image output(im.width(), im.height(), im.channels()); // Initialize output image of same size
+  for (int h = 0; h < im.height(); h++) { // Iterate pixels in row-major iteration order
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) {
+        output(w, h, c) = sqrt(
+          pow(im_h(w, h, c), 2) + pow(im_v(w, h, c), 2) // Gradient formula: sqrt(hor^2 + ver^2)
+        );
+      }
+    }
+  }
+  return output; // Return output image
 }
 
 vector<float> gauss1DFilterValues(float sigma, float truncate) {

@@ -18,7 +18,7 @@ using namespace std;
 // This is a way for you to test your functions.
 // We will only grade the contents of filter.cpp and Image.cpp
 int main() {
-  cout << "nothing done in a2_main.cpp, debug me !" << endl;
+  // cout << "nothing done in a2_main.cpp, debug me !" << endl;
 
   // ------- Example tests, change them ! --------------
   // Image im = impulseImg(10);
@@ -30,12 +30,16 @@ int main() {
 
   // cout << "keep testing..." << endl;
 
-  Image im2("./Input/Cambridge2.png");
-  Image blurred1 = boxBlur(im2, 9, true);
-  blurred1.write("./Output/boxblur_cambridge2.png");
+  // Image im2("./Input/Cambridge2.png");
+  // Image blurred1 = boxBlur(im2, 9, true);
+  // blurred1.write("./Output/boxblur_cambridge2.png");
 
-  Image blurred2 = boxBlur_filterClass(im2, 9, true);
-  blurred2.write("./Output/boxblur_filterClass_cambridge2.png");
+  // Image blurred2 = boxBlur_filterClass(im2, 9, true);
+  // blurred2.write("./Output/boxblur_filterClass_cambridge2.png");
+
+  Image im("./Input/lounge_view.png");
+  Image gradmag = gradientMagnitude(im, true);
+  gradmag.write("./Output/grad_mag_lounge_view.png");
   // ---------------------------------------------------
 
   // // ---------------------------------------------------
