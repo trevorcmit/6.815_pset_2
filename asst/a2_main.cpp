@@ -18,6 +18,7 @@ using namespace std;
 // This is a way for you to test your functions.
 // We will only grade the contents of filter.cpp and Image.cpp
 int main() {
+  clock_t start = clock();
   // cout << "nothing done in a2_main.cpp, debug me !" << endl;
 
   // ------- Example tests, change them ! --------------
@@ -30,7 +31,16 @@ int main() {
 
   // cout << "keep testing..." << endl;
 
-  // Image im2("./Input/Cambridge2.png");
+  // Image im1("./Input/Cambridge1.png");
+
+  // Image sharp_sig1_str1 = unsharpMask(im1, 1.0f, 3.0f, 1.0f);
+  // Image sharp_sig10_str1 = unsharpMask(im1, 10.0f, 3.0f, 1.0f);
+  // Image sharp_sig1_str10 = unsharpMask(im1, 1.0f, 3.0f, 10.0f);
+  // Image sharp_sig10_str10 = unsharpMask(im1, 10.0f, 3.0f, 10.0f);
+  // sharp_sig1_str1.write("./Output/sharp_sig1_str1.png");
+  // sharp_sig10_str1.write("./Output/sharp_sig10_str1.png");
+  // sharp_sig1_str10.write("./Output/sharp_sig1_str10.png");
+  // sharp_sig10_str10.write("./Output/sharp_sig10_str10.png");
   // Image blurred1 = boxBlur(im2, 9, true);
   // blurred1.write("./Output/boxblur_cambridge2.png");
 
@@ -89,27 +99,34 @@ int main() {
   // // since the Sobel filter changes the range of a (0,1) image to (-4,4)
   // Image sobelOut = sobelFiltered / 8 + 0.5;
   // sobelOut.write("./Output/sobelFiltered.png");
+
+  Image im("./Input/lens.png"); // Import lens image
+  Image bila = bilateral(im, 0.1f, 1.0f, 3.0f, true);
+  bila.write("./Output/bilateral_lens.png");
   // // ---------------------------------------------------
 
   // // --- Timer example ---------------------------------
 
-  Image im2("./Input/Cambridge2.png");
-  float sigma = 3.0f;
+  // Image im2("./Input/Cambridge2.png");
+  // float sigma = 3.0f;
 
-  clock_t start0 = clock();
-  Image blur_2d = gaussianBlur_2D(im2, sigma);
-  clock_t end0 = clock();
+  // clock_t start0 = clock();
+  // Image blur_2d = gaussianBlur_2D(im2, sigma);
+  // clock_t end0 = clock();
 
-  clock_t start1 = clock();
-  Image blur_sep = gaussianBlur_separable(im2, sigma);
-  clock_t end1 = clock();
+  // clock_t start1 = clock();
+  // Image blur_sep = gaussianBlur_separable(im2, sigma);
+  // clock_t end1 = clock();
 
-  blur_2d.write("gauss_2d_3_timer.png");
-  blur_sep.write("gauss_sep_3_timer.png");
+  // blur_2d.write("gauss_2d_3_timer.png");
+  // blur_sep.write("gauss_sep_3_timer.png");
 
-  double duration0 = (end0 - start0) * 1.0f / CLOCKS_PER_SEC;
-  double duration1 = (end1 - start1) * 1.0f / CLOCKS_PER_SEC;
-  cout << "2D gaussian took: " << duration0 << "s" << endl;
-  cout << "2D gaussian took: " << duration1 << "s" << endl;
+  // double duration0 = (end0 - start0) * 1.0f / CLOCKS_PER_SEC;
+  // double duration1 = (end1 - start1) * 1.0f / CLOCKS_PER_SEC;
+  // cout << "2D gaussian took: " << duration0 << "s" << endl;
+  // cout << "2D gaussian took: " << duration1 << "s" << endl;
+  clock_t end = clock();
+  double duration = (end - start) * 1.0f / CLOCKS_PER_SEC;
+  cout << "a2_main.cpp runtime: " << duration << "s" << endl;
   // // ---------------------------------------------------
 }

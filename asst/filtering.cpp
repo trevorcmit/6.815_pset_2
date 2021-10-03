@@ -163,14 +163,56 @@ Image unsharpMask(const Image &im, float sigma, float truncate, float strength,
                   bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
   // Sharpen an image
-  return im;
+  Image lowpass = gaussianBlur_separable(im, sigma, truncate); // Initialize lowpass with Gaussian
+  Image highpass = im - lowpass;                               // Subtract lowpass from original to get highpass
+
+  Image str(im.width(), im.height(), im.channels());           // Initialize strength for multiplication
+  str.set_color(strength);                                     // Set strength equal to input strength
+  str = str * highpass;                                        // Multiply by highpass to get product
+
+  return im + str;                                             // Return original + product
 }
 
 Image bilateral(const Image &im, float sigmaRange, float sigmaDomain,
                 float truncateDomain, bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
-  // Denoise an image using the bilateral filter
-  return im;
+  int ext = abs(ceil(sigmaDomain * truncateDomain));                         // Initialize ceiling value                
+	vector<float> d_kernel = gauss2DFilterValues(sigmaDomain, truncateDomain); // Create 2D Gauss kernel values
+	Filter domain_filter(d_kernel, 1 + 2 * ext, 1 + 2 * ext);                  // Create spatial (domain) filter
+  Image output(im.width(), im.height(), im.channels());
+
+  for (int h = 0; h < im.height(); h++) { // Iterate pixels in row-major iteration order
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) {
+        
+        float sum = 0.0f, norm = 0.0f;                   // Initialize sum
+        int f_h = 0;                                     // Index for kernel y value
+        for (int h0 = h - ext; h0 <= h + ext; h0++) {    // Iterate in row-major order
+          int f_w = 0;                                   // Index for kernel x value
+          for (int w0 = w - ext; w0 <= ext; w0++) {
+
+            // Calculating Range value
+            float range_sum = 0.0f;
+            for (int c0 = 0; c0 < im.channels(); c0++) {
+              range_sum += pow(im.smartAccessor(w, h, c0, clamp) - im.smartAccessor(w0, h0, c0, clamp), 2);
+            }
+            float range = exp(-1.0f * sqrt(range_sum) / (2 * pow(sigmaRange, 2)));
+
+            // Multiply Domain kernel, range, and (x',y')
+            norm += domain_filter(f_w, f_h) * range; // Save value for normalization later
+            sum += domain_filter(f_w, f_h) * range * im.smartAccessor(w0, h0, c, clamp);
+
+            f_w += 1; // Increment kernel x value
+          }
+          f_h += 1; // Increment kernel y value
+        }
+
+        output(w, h, c) = sum / norm; // Divide sum by the sum of normalizing values
+      }
+    }
+  }
+
+  return output; // Return output image
 }
 
 Image bilaYUV(const Image &im, float sigmaRange, float sigmaY, float sigmaUV,
