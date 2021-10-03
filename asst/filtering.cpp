@@ -96,30 +96,55 @@ Image gradientMagnitude(const Image &im, bool clamp) {
 
 vector<float> gauss1DFilterValues(float sigma, float truncate) {
   // --------- HANDOUT  PS02 ------------------------------
-  // Create a vector containing the normalized values in a 1D Gaussian filter
-  // Truncate the gaussian at truncate*sigma.
-  return vector<float>();
+  int ext = abs(ceil(truncate * sigma)); // Extension of Filter in each direction away from center
+	vector<float> filt;
+	float sum = 0.0f; // Keep track of sum of values in filter to later normalize to sum to 1
+	for (int n = -ext; n <= ext; n++) {
+    float value = exp(-1.0f * pow(n, 2) / (2 * pow(sigma, 2))); // Calculate value from Gauss function
+		filt.push_back(value);
+		sum += value;
+	}
+  for (int i = 0; i < 1 + 2 * ext; i++) { // Loop over vector again to normalize to sum to 1
+    filt.at(i) /= sum;
+  }
+  return filt;
 }
 
-Image gaussianBlur_horizontal(const Image &im, float sigma, float truncate,
-                              bool clamp) {
+Image gaussianBlur_horizontal(const Image &im, float sigma, float truncate, bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
-  // Gaussian blur across the rows of an image
-  return im;
+  vector<float> kernel = gauss1DFilterValues(sigma, truncate);
+  int ext = abs(ceil(truncate * sigma));
+  Filter gauss_h(kernel, 1 + 2 * ext, 1);
+  return gauss_h.convolve(im, clamp);
 }
 
 vector<float> gauss2DFilterValues(float sigma, float truncate) {
   // --------- HANDOUT  PS02 ------------------------------
-  // Create a vector containing the normalized values in a 2D Gaussian
-  // filter. Truncate the gaussian at truncate*sigma.
-  return vector<float>();
+  int ext = abs(ceil(truncate * sigma)); // Extension of Filter in each direction away from center
+	vector<float> filt;
+	float sum = 0.0f; // Keep track of sum of values in filter to later normalize to sum to 1
+	for (int x = -ext; x <= ext; x++) {
+    for (int y = -ext; y <= ext; y++) { // Form 2D kernel through double for-loop iteration
+      float value = exp(
+        -1.0f * (pow(x, 2) + pow(y, 2)) / (2 * pow(sigma, 2)) // Apply 2D gaussian formula
+        );
+      filt.push_back(value); // Add value to vector object
+      sum += value;
+    }
+	}
+  for (int i = 0; i < (1 + 2 * ext) * (1 + 2 * ext); i++) { // Loop over vector again to normalize to sum to 1
+    filt.at(i) /= sum;
+  }
+  return filt;
 }
 
 Image gaussianBlur_2D(const Image &im, float sigma, float truncate,
                       bool clamp) {
   // --------- HANDOUT  PS02 ------------------------------
-  // Blur an image with a full 2D rotationally symmetric Gaussian kernel
-  return im;
+  vector<float> kernel = gauss2DFilterValues(sigma, truncate); // Initialize kernel
+  int ext = abs(ceil(truncate * sigma));
+  Filter gauss_2d(kernel, 1 + 2 * ext, 1 + 2 * ext); // Make square filter
+  return gauss_2d.convolve(im, clamp);
 }
 
 Image gaussianBlur_separable(const Image &im, float sigma, float truncate,
@@ -127,7 +152,11 @@ Image gaussianBlur_separable(const Image &im, float sigma, float truncate,
   // --------- HANDOUT  PS02 ------------------------------
   // Use principles of seperabiltity to blur an image using 2 1D Gaussian
   // Filters
-  return im;
+  vector<float> kernel = gauss1DFilterValues(sigma, truncate); // Get 1D gauss values
+  int ext = abs(ceil(truncate * sigma));
+  Filter gauss_h(kernel, 1 + 2 * ext, 1); // Horizontal filter
+  Filter gauss_v(kernel, 1, 1 + 2 * ext); // Vertical filter
+  return gauss_v.convolve(gauss_h.convolve(im, clamp), clamp); // Convolute in sequence
 }
 
 Image unsharpMask(const Image &im, float sigma, float truncate, float strength,

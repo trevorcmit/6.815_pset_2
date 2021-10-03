@@ -37,9 +37,19 @@ int main() {
   // Image blurred2 = boxBlur_filterClass(im2, 9, true);
   // blurred2.write("./Output/boxblur_filterClass_cambridge2.png");
 
-  Image im("./Input/lounge_view.png");
-  Image gradmag = gradientMagnitude(im, true);
-  gradmag.write("./Output/grad_mag_lounge_view.png");
+  // Image im("./Input/Cambridge2.png");
+  // Image gauss2d_n100 = gaussianBlur_2D(im, -100);
+  // Image gauss2d_n10  = gaussianBlur_2D(im, -10);
+  // Image gauss2d_n1   = gaussianBlur_2D(im, -1);
+  // Image gauss2d_1    = gaussianBlur_separable(im, 3);
+  // Image gauss2d_10   = gaussianBlur_2D(im, 10);
+  // Image gauss2d_100  = gaussianBlur_2D(im, 100);
+  // gauss2d_100.write("./Output/gauss_2d_100.png");
+  // gauss2d_10.write("./Output/gauss_2d_10.png");
+  // gauss2d_1.write("./Output/gauss_2d_3.png");
+  // gauss2d_n100.write("./Output/gauss_2d_n100.png");
+  // gauss2d_n10.write("./Output/gauss_2d_n10.png");
+  // gauss2d_n1.write("./Output/gauss_2d_n1.png");
   // ---------------------------------------------------
 
   // // ---------------------------------------------------
@@ -82,11 +92,24 @@ int main() {
   // // ---------------------------------------------------
 
   // // --- Timer example ---------------------------------
-  // clock_t start = clock();
-  // float sigma = 2.0f;
-  // Image blurHorizontal = gaussianBlur_2D(im2, sigma);
-  // clock_t end = clock();
-  // double duration = (end - start) * 1.0f / CLOCKS_PER_SEC;
-  // cout << "2D gaussian took: " << duration << "s" << endl;
+
+  Image im2("./Input/Cambridge2.png");
+  float sigma = 3.0f;
+
+  clock_t start0 = clock();
+  Image blur_2d = gaussianBlur_2D(im2, sigma);
+  clock_t end0 = clock();
+
+  clock_t start1 = clock();
+  Image blur_sep = gaussianBlur_separable(im2, sigma);
+  clock_t end1 = clock();
+
+  blur_2d.write("gauss_2d_3_timer.png");
+  blur_sep.write("gauss_sep_3_timer.png");
+
+  double duration0 = (end0 - start0) * 1.0f / CLOCKS_PER_SEC;
+  double duration1 = (end1 - start1) * 1.0f / CLOCKS_PER_SEC;
+  cout << "2D gaussian took: " << duration0 << "s" << endl;
+  cout << "2D gaussian took: " << duration1 << "s" << endl;
   // // ---------------------------------------------------
 }
