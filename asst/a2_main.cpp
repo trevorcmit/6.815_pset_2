@@ -31,16 +31,17 @@ int main() {
 
   // cout << "keep testing..." << endl;
 
-  // Image im1("./Input/Cambridge1.png");
+  Image im1("./Input/Cambridge1.png");
 
-  // Image sharp_sig1_str1 = unsharpMask(im1, 1.0f, 3.0f, 1.0f);
-  // Image sharp_sig10_str1 = unsharpMask(im1, 10.0f, 3.0f, 1.0f);
-  // Image sharp_sig1_str10 = unsharpMask(im1, 1.0f, 3.0f, 10.0f);
-  // Image sharp_sig10_str10 = unsharpMask(im1, 10.0f, 3.0f, 10.0f);
-  // sharp_sig1_str1.write("./Output/sharp_sig1_str1.png");
-  // sharp_sig10_str1.write("./Output/sharp_sig10_str1.png");
-  // sharp_sig1_str10.write("./Output/sharp_sig1_str10.png");
-  // sharp_sig10_str10.write("./Output/sharp_sig10_str10.png");
+  Image sharp_sig1_str1 = unsharpMask(im1, 1.0f, 3.0f, 1.0f);
+  Image sharp_sig10_str1 = unsharpMask(im1, 10.0f, 3.0f, 1.0f);
+  Image sharp_sig1_str10 = unsharpMask(im1, 1.0f, 3.0f, 10.0f);
+  Image sharp_sig10_str10 = unsharpMask(im1, 10.0f, 3.0f, 10.0f);
+  sharp_sig1_str1.write("./Output/sharp_sig1_str1.png");
+  sharp_sig10_str1.write("./Output/sharp_sig10_str1.png");
+  sharp_sig1_str10.write("./Output/sharp_sig1_str10.png");
+  sharp_sig10_str10.write("./Output/sharp_sig10_str10.png");
+  
   // Image blurred1 = boxBlur(im2, 9, true);
   // blurred1.write("./Output/boxblur_cambridge2.png");
 

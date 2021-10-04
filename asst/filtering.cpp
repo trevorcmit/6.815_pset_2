@@ -167,7 +167,7 @@ Image unsharpMask(const Image &im, float sigma, float truncate, float strength,
   Image highpass = im - lowpass;                               // Subtract lowpass from original to get highpass
 
   Image str(im.width(), im.height(), im.channels());           // Initialize strength for multiplication
-  str.set_color(strength);                                     // Set strength equal to input strength
+  str.set_color(strength, strength, strength);                                     // Set strength equal to input strength
   str = str * highpass;                                        // Multiply by highpass to get product
 
   return im + str;                                             // Return original + product
