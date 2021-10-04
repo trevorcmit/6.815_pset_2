@@ -185,12 +185,20 @@ Image bilateral(const Image &im, float sigmaRange, float sigmaDomain,
     for (int w = 0; w < im.width(); w++) {
       for (int c = 0; c < im.channels(); c++) {
         
-        float sum = 0.0f, norm = 0.0f;                                // Initialize sum
+        float sum = 0.0f, norm = 0.0f;                   // Initialize sum
         int f_h = 0;                                     // Index for kernel y value
         for (int h0 = h - ext; h0 <= h + ext; h0++) {    // Iterate in row-major order
           int f_w = 0;                                   // Index for kernel x value
           for (int w0 = w - ext; w0 <= w + ext; w0++) {
+
+            // Do we loop over ALL colors for each pixel, or just each color for each pixel?
+            // float range_sum = 0.0f;
+            // for (int c0 = 0; c0 < im.channels(); c0++) {
+            //   range_sum += pow(im.smartAccessor(w, h, c0, clamp) - im.smartAccessor(w0, h0, c0, clamp), 2);
+            // }
             float range_sum = pow(im.smartAccessor(w, h, c, clamp) - im.smartAccessor(w0, h0, c, clamp), 2);
+
+
             float range = exp(-1.0f * range_sum / (2 * pow(sigmaRange, 2)));
             float domain = domain_filter(f_w, f_h); // Calculating Domain value from 2D filter
             norm += domain * range; // Save value for normalization later
@@ -212,8 +220,53 @@ Image bilaYUV(const Image &im, float sigmaRange, float sigmaY, float sigmaUV,
   // 6.865 only
   // Bilateral Filter an image seperatly for
   // the Y and UV components of an image
-  return im;
+  Image im_yuv = rgb2yuv(im); // Convert image to YUV
+  Image Y = bilateral(im, sigmaRange, sigmaY, truncateDomain, clamp);
+  Image UV = bilateral(im, sigmaRange, sigmaUV, truncateDomain, clamp);
+
+  Image output(im.width(), im.height(), im.channels());
+  for (int h = 0; h < im.height(); h++) { // Iterate pixels in row-major iteration order
+    for (int w = 0; w < im.width(); w++) {
+      output(w, h, 0) = Y(w, h, 0);  // Take Y channel from sigmaY filtering
+      output(w, h, 1) = UV(w, h, 1); // Take U channel from sigmaUV filtering
+      output(w, h, 2) = UV(w, h, 2); // Take V channel from sigmaUV filtering
+    }
+  }
+  return yuv2rgb(output); // Convert back to RGB space
 }
+
+Image nonlocal_means_bilateral(const Image &im, float sigmaRange, float sigmaDomain, bool clamp) {
+  // --------- HANDOUT  PS02 EXTRA CREDIT-------------------------
+  Image output(im.width(), im.height(), im.channels()); // Initialize output image
+
+  for (int h = 0; h < im.height(); h++) { // Iterate pixels in row-major iteration order
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) {
+        
+        float sum = 0.0f, norm = 0.0f;            // Initialize sum/norm to calculate pixel valu after iteration
+        for (int h0 = 0; h0 < im.height(); h0++) {
+          for (int w0 = 0; w0 < im.width(); w0++) {
+
+            // Calculate Range value
+            float range_sum = pow(im.smartAccessor(w, h, c, clamp) - im.smartAccessor(w0, h0, c, clamp), 2);
+            float range = exp(-1.0f * range_sum / (2 * pow(sigmaRange, 2)));
+
+            // Calculate Domain value
+            float domain = exp(
+              -1.0f * (pow(h - h0, 2) + pow(w - w0, 2)) / (2 * pow(sigmaDomain, 2))
+            );
+
+            norm += domain * range; // Save value for normalization later
+            sum += domain * range * im.smartAccessor(w0, h0, c, clamp); // Calculating Range value
+          }
+        }
+        output(w, h, c) = sum / norm; // Divide sum by the sum of normalizing values
+      }
+    }
+  }
+  return output; // Return output image
+}
+
 
 /**************************************************************
  //               DON'T EDIT BELOW THIS LINE                //

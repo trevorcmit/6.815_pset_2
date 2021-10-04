@@ -71,6 +71,8 @@ Image bilaYUV(const Image &im, float sigmaRange = 0.1, float sigmaY = 1.0,
               float sigmaUV = 4.0, float truncateDomain = 3.0,
               bool clamp = true);
 
+Image nonlocal_means_bilateral(const Image &im, float sigmaRange=0.1, float sigmaDomain=1.0, bool clamp=true);
+
 // Return impulse image of size k x k x 1
 // returned image is all zeros (except at the center where it is white)
 Image impulseImg(int k);
