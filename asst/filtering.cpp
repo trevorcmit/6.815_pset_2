@@ -192,11 +192,11 @@ Image bilateral(const Image &im, float sigmaRange, float sigmaDomain,
           for (int w0 = w - ext; w0 <= w + ext; w0++) {
 
             // Do we loop over ALL colors for each pixel, or just each color for each pixel?
-            // float range_sum = 0.0f;
-            // for (int c0 = 0; c0 < im.channels(); c0++) {
-            //   range_sum += pow(im.smartAccessor(w, h, c0, clamp) - im.smartAccessor(w0, h0, c0, clamp), 2);
-            // }
-            float range_sum = pow(im.smartAccessor(w, h, c, clamp) - im.smartAccessor(w0, h0, c, clamp), 2);
+            float range_sum = 0.0f;
+            for (int c0 = 0; c0 < im.channels(); c0++) {
+              range_sum += pow(im.smartAccessor(w, h, c0, clamp) - im.smartAccessor(w0, h0, c0, clamp), 2);
+            }
+            // float range_sum = pow(im.smartAccessor(w, h, c, clamp) - im.smartAccessor(w0, h0, c, clamp), 2);
 
 
             float range = exp(-1.0f * range_sum / (2 * pow(sigmaRange, 2)));

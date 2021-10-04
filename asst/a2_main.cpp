@@ -101,8 +101,8 @@ int main() {
   // sobelOut.write("./Output/sobelFiltered.png");
 
   Image im("./Input/lens.png"); // Import lens image
-  Image bila = nonlocal_means_bilateral(im);
-  bila.write("./Output/nonlocal_means_bilateral_lens.png");
+  Image bila = bilateral(im);
+  bila.write("./Output/bilateral_lens_2.png");
   // // ---------------------------------------------------
 
   // // --- Timer example ---------------------------------
